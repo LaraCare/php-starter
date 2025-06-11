@@ -2,9 +2,13 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Repositories\UserRepository;
 
 class HomeController extends Controller {
-    public function index() {
-        $this->view('home', ['title' => 'Welcome to My PHP Starter!']);
+    public function index()
+    {
+        $repo = new UserRepository();
+        $users = $repo->all();
+        $this->view('home', ['users' => $users]);
     }
 }
