@@ -1,18 +1,13 @@
-<?php 
-// Autoload classes from the "app" directory using PSR-4 style
+<?php
+
 spl_autoload_register(function ($class) {
-    $prefix = 'App\\';
-    $base_dir = __DIR__ . '/../app/';
-
-    $len = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) {
-        return;
-    }
-
-    $relative_class = substr($class, $len);
-    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+    $baseDir = __DIR__ . '/../'; // root of the project
+    $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+    $file = $baseDir . $classPath . '.php';
 
     if (file_exists($file)) {
-        require $file;
+        require_once $file;
+    } else {
+        echo "❌ Autoload failed for class: {$class} at path: {$file}\n";
     }
 });
