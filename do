@@ -3,6 +3,7 @@
 
 require_once __DIR__ . '/utils/autoload.php';
 
+use Commands\ServiceCommand;
 use Commands\ViewCommand;
 use Commands\ControllerCommand;
 use Commands\MigrationCommand;
@@ -55,6 +56,11 @@ switch ($command) {
     case 'migration':
         MigrationCommand::handle($name, $options);
         break;
+    case 'service':
+        require_once __DIR__ . '/commands/ServiceCommand.php';
+        ServiceCommand::handle($name);
+        break;
+
     default:
         echo "\n    ❌ Unknown command: {$command}\n\n";
         break;

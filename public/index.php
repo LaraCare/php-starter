@@ -2,8 +2,13 @@
 // loader file
 require_once '../utils/autoload.php';
 
-// config fie
-require_once '../config/config.php';
+// Helper file
+require_once __DIR__ . '/../utils/helpers.php';
+
+// load the '.env' file
+require_once __DIR__ . '/../utils/env.php';
+loadEnv();
+
 
 // the normalizer
 require_once '../config/normalize.php';
