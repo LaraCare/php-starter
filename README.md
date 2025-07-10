@@ -38,6 +38,8 @@ You have two options to run the application:
 ### Option 2: Using PHP’s built-in server
 1. Open a terminal and navigate to the `public/` directory of the project.
 2. Run the following command: `php -S 127.0.0.1:8000`
+###### --> Or
+directly run `php -S 127.0.0.1:8000 -t public`
 3. Then visit: <a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>
 
 ## ✅ Features

@@ -1,9 +1,23 @@
 <?php
+// loader file
+require_once '../utils/autoload.php';
+
+// config fie
 require_once '../config/config.php';
+
+// the normalizer
 require_once '../config/normalize.php';
+
+// establichement of the connection with the database
 require_once '../database/connection.php';
+
+// our route file
 require_once '../app/core/Router.php';
+
+// the super controller
 require_once '../app/core/Controller.php';
+
+// customer files...
 require_once '../app/controllers/HomeController.php';
 require_once '../app/controllers/ApiController.php';
 

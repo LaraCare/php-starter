@@ -9,6 +9,9 @@ class HomeController extends Controller {
     {
         $repo = new UserRepository();
         $users = $repo->all();
-        $this->view('home', ['users' => $users]);
+        $this->view('home', [
+            'title' => "Home Page",
+            'users' => $users
+        ]);
     }
 }

@@ -1,0 +1,114 @@
+#!/usr/bin/env php
+<?php
+
+// CLI Tool: php do.php:view ViewName
+
+require_once __DIR__ . '/utils/autoload.php';
+
+$args = $argv;
+array_shift($args); // Remove script name (do.php)
+
+if (count($args) === 0) {
+    echo <<<HELP
+Usage:
+  php do.php:view ViewName
+  php do.php:controller ControllerName
+  php do.php:migration CreateUsers --type=create
+
+Available commands:
+  view:<name>         Create a view in views/
+  controller:<name>   Create a controller in app/controllers/
+  migration:<name>    Create an SQL file in database/migrations/
+
+HELP;
+    exit;
+}
+
+// Parse command like 'view:Home'
+$rawCommand = $args[0]; // e.g., 'view:Home'
+[$command, $name] = explode(':', $rawCommand);
+
+// Handle additional options (e.g., --type=create)
+function parseOptions($args) {
+    $opts = [];
+    foreach ($args as $arg) {
+        if (str_starts_with($arg, '--')) {
+            [$key, $value] = explode('=', ltrim($arg, '-'), 2);
+            $opts[$key] = $value ?? true;
+        }
+    }
+    return $opts;
+}
+
+$options = parseOptions($args);
+
+// Command logic
+switch ($command) {
+    case 'view':
+        if ($name) {
+            $file = __DIR__ . "/views/{$name}.php";
+            if (!file_exists($file)) {
+                file_put_contents($file, "<h1>This is the {$name} view</h1>");
+                echo "\n    ✅ View '{$name}' created at views/{$name}.php\n\n";
+            } else {
+                echo "\n    ⚠️ View '{$name}' already exists.\n\n";
+            }
+        } else {
+            echo "❌ Missing view name.\n";
+        }
+        break;
+
+    case 'controller':
+        if ($name) {
+            $className = ucfirst($name);
+            $file = __DIR__ . "/app/controllers/{$className}.php";
+            if (!file_exists($file)) {
+                $template = <<<PHP
+<?php
+
+namespace App\Controllers;
+
+use App\Core\Controller;
+
+class {$className} extends Controller
+{
+    public function index()
+    {
+        echo "Welcome from {$className}";
+    }
+}
+PHP;
+                file_put_contents($file, $template);
+                echo "✅ Controller '{$className}' created at app/controllers/{$className}.php\n";
+            } else {
+                echo "⚠️ Controller '{$className}' already exists.\n";
+            }
+        } else {
+            echo "❌ Missing controller name.\n";
+        }
+        break;
+
+    case 'migration':
+        if ($name) {
+            $file = date('Ymd_His') . "_{$name}.sql";
+            $table = preg_replace('/^(create|drop|update)_/', '', strtolower($name));
+            $path = __DIR__ . "/database/migrations/{$file}";
+
+            $template = "-- Migration: $name\n\n";
+            if (($options['type'] ?? '') === 'create') {
+                $template .= "CREATE TABLE IF NOT EXISTS {$table} (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);";
+            } else {
+                $template .= "-- Write your SQL here";
+            }
+
+            file_put_contents($path, $template);
+            echo "✅ Migration '{$file}' created in database/migrations/\n";
+        } else {
+            echo "❌ Missing migration name.\n";
+        }
+        break;
+
+    default:
+        echo "❌ Unknown command '{$command}'. Run without arguments to see help.\n";
+        break;
+}
